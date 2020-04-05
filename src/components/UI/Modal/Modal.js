@@ -10,7 +10,7 @@ const Modal = ({ children, show, modalClosed }) => {
         className={classes.Modal}
         style={{
           transform: show ? 'translateY(0)' : 'translateY(-100vh)',
-          opacity: show ? '1' : '0'
+          opacity: show ? '1' : '0',
         }}
       >
         {children}
@@ -20,7 +20,10 @@ const Modal = ({ children, show, modalClosed }) => {
 };
 
 const areEqual = (prevProps, nextProps) => {
-  return prevProps.show === nextProps.show;
+  return (
+    prevProps.show === nextProps.show &&
+    prevProps.children === nextProps.children
+  );
 };
 
 export default React.memo(Modal, areEqual);
