@@ -102,7 +102,7 @@ class ContactData extends React.Component {
 
   orderHandler = (event) => {
     event.preventDefault();
-    const { ingredients, price, onBugerOrder } = this.props;
+    const { ingredients, price, onBugerOrder, token, userId } = this.props;
     const { orderForm } = this.state;
     const orderData = {};
     for (let elId in orderForm) {
@@ -112,8 +112,9 @@ class ContactData extends React.Component {
       ingredients,
       price,
       orderData,
+      userId,
     };
-    onBugerOrder(order);
+    onBugerOrder(order, token);
   };
 
   checkValidity = (value, rules) => {
@@ -202,10 +203,13 @@ const mapStateToProps = (state) => ({
   ingredients: state.burgerBuilder.ingredients,
   price: state.burgerBuilder.totalPrice,
   loading: state.order.loading,
+  token: state.auth.token,
+  userId: state.auth.userId,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  onBugerOrder: (orderData) => dispatch(actions.purchaseBurger(orderData)),
+  onBugerOrder: (orderData, token) =>
+    dispatch(actions.purchaseBurger(orderData, token)),
 });
 
 export default connect(
