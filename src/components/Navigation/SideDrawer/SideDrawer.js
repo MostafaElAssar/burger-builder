@@ -12,7 +12,7 @@ const SideDrawer = ({ closed, open, isAuth }) => {
   return (
     <React.Fragment>
       <Backdrop show={open} clicked={closed} />
-      <div className={attachedClasses.join(' ')}>
+      <div className={attachedClasses.join(' ')} onClick={closed}>
         <div className={classes.Logo}>
           <Logo />
         </div>
