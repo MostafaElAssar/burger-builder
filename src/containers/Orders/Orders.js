@@ -9,7 +9,7 @@ import * as actions from '../../store/actions/';
 const Orders = ({ loading, orders, onFetchOrders, token, userId }) => {
   useEffect(() => {
     onFetchOrders(token, userId);
-  }, []);
+  }, [onFetchOrders, token, userId]);
 
   let ordersList = <Spinner />;
   if (!loading) {

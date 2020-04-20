@@ -8,7 +8,15 @@ import * as actions from '../../store/actions/';
 import { checkValidity } from '../../shared/utility';
 import classes from './Auth.module.css';
 
-const Auth = (props) => {
+const Auth = ({
+  buildingBurger,
+  authRedirectPath,
+  onSetAuthRedirectPath,
+  isAuthenticated,
+  onAuth,
+  loading,
+  error,
+}) => {
   const [controls, setControls] = useState({
     email: {
       elementType: 'input',
@@ -43,10 +51,10 @@ const Auth = (props) => {
   const [isSignup, setIsSignup] = useState(true);
 
   useEffect(() => {
-    if (!props.buildingBurger && props.authRedirectPath !== '/') {
-      props.onSetAuthRedirectPath();
+    if (!buildingBurger && authRedirectPath !== '/') {
+      onSetAuthRedirectPath();
     }
-  }, []);
+  }, [buildingBurger, authRedirectPath, onSetAuthRedirectPath]);
 
   const handleInputChange = (event, controlName) => {
     const updatedControls = {
@@ -67,14 +75,13 @@ const Auth = (props) => {
 
   const submitHandler = (event) => {
     event.preventDefault();
-    props.onAuth(controls.email.value, controls.password.value, isSignup);
+    onAuth(controls.email.value, controls.password.value, isSignup);
   };
 
   const switchAuthModeHandler = () => {
     setIsSignup(!isSignup);
   };
 
-  const { isAuthenticated } = props;
   const formElementsArray = [];
   for (let key in controls) {
     formElementsArray.push({
@@ -94,18 +101,18 @@ const Auth = (props) => {
       touched={formElement.config.touched}
     />
   ));
-  if (props.loading) {
+  if (loading) {
     form = <Spinner />;
   }
 
   let errorMessage = null;
-  if (props.error) {
-    errorMessage = <p>{props.error.message}</p>;
+  if (error) {
+    errorMessage = <p>{error.message}</p>;
   }
 
   let authRedirect = null;
   if (isAuthenticated) {
-    authRedirect = <Redirect to={props.authRedirectPath} />;
+    authRedirect = <Redirect to={authRedirectPath} />;
   }
 
   return (

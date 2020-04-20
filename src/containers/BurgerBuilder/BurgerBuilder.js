@@ -9,12 +9,23 @@ import Spinner from '../../components/UI/Spinner/Spinner';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import * as actions from '../../store/actions/';
 
-export const BurgerBuilder = (props) => {
+export const BurgerBuilder = ({
+  onInitIngredients,
+  isAuthenticated,
+  onSetAuthRedirectPath,
+  history,
+  onPurchaseInit,
+  ingredients,
+  totalPrice,
+  error,
+  onIngredientAdded,
+  onIngredientRemoved,
+}) => {
   const [purchasing, setPurchasing] = useState(false);
 
   useEffect(() => {
-    props.onInitIngredients();
-  }, []);
+    onInitIngredients();
+  }, [onInitIngredients]);
 
   const updatePurchaseState = (ingredients) => {
     const sum = Object.keys(ingredients)
@@ -24,11 +35,11 @@ export const BurgerBuilder = (props) => {
   };
 
   const purchaseHandler = () => {
-    if (props.isAuthenticated) {
+    if (isAuthenticated) {
       setPurchasing(true);
     } else {
-      props.onSetAuthRedirectPath('/checkout');
-      props.history.push('/auth');
+      onSetAuthRedirectPath('/checkout');
+      history.push('/auth');
     }
   };
 
@@ -37,12 +48,10 @@ export const BurgerBuilder = (props) => {
   };
 
   const purchaseContinueHandler = () => {
-    const { history, onPurchaseInit } = props;
     onPurchaseInit();
     history.push('/checkout');
   };
 
-  const { ingredients, totalPrice, error, isAuthenticated } = props;
   const disabledInfo = { ...ingredients };
   for (let key in disabledInfo) {
     disabledInfo[key] = disabledInfo[key] <= 0;
@@ -55,8 +64,8 @@ export const BurgerBuilder = (props) => {
         <Burger ingredients={ingredients} />
         <BuildControls
           isAuth={isAuthenticated}
-          ingredientAdded={props.onIngredientAdded}
-          ingredientRemoved={props.onIngredientRemoved}
+          ingredientAdded={onIngredientAdded}
+          ingredientRemoved={onIngredientRemoved}
           disabled={disabledInfo}
           price={totalPrice}
           purchasable={updatePurchaseState(ingredients)}
