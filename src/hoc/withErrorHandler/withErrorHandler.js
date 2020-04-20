@@ -1,46 +1,41 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from '../../components/UI/Modal/Modal';
 
 const withErrorHandler = (WrappedComponent, axios) => {
-  return class extends React.Component {
-    state = {
-      error: null,
+  return (props) => {
+    const [error, setError] = useState(null);
+
+    const reqInterceptor = axios.interceptors.request.use((req) => {
+      setError(null);
+      return req;
+    });
+
+    const resInterceptor = axios.interceptors.response.use(
+      (res) => res,
+      (err) => {
+        setError(err);
+      }
+    );
+
+    useEffect(() => {
+      return () => {
+        axios.interceptors.request.eject(reqInterceptor);
+        axios.interceptors.response.eject(resInterceptor);
+      };
+    }, [reqInterceptor, resInterceptor]);
+
+    const errorComfirmedHandler = () => {
+      setError(null);
     };
 
-    componentWillMount() {
-      this.reqInterceptor = axios.interceptors.request.use((req) => {
-        this.setState({ error: null });
-        return req;
-      });
-
-      this.resInterceptor = axios.interceptors.response.use(
-        (res) => res,
-        (error) => {
-          this.setState({ error });
-        }
-      );
-    }
-
-    componentWillUnmount() {
-      axios.interceptors.request.eject(this.reqInterceptor);
-      axios.interceptors.response.eject(this.resInterceptor);
-    }
-
-    errorComfirmedHandler = () => {
-      this.setState({ error: null });
-    };
-
-    render() {
-      const { error } = this.state;
-      return (
-        <React.Fragment>
-          <Modal show={error} modalClosed={this.errorComfirmedHandler}>
-            {error ? error.message : null}
-          </Modal>
-          <WrappedComponent {...this.props} />
-        </React.Fragment>
-      );
-    }
+    return (
+      <React.Fragment>
+        <Modal show={error} modalClosed={errorComfirmedHandler}>
+          {error ? error.message : null}
+        </Modal>
+        <WrappedComponent {...props} />
+      </React.Fragment>
+    );
   };
 };
 
